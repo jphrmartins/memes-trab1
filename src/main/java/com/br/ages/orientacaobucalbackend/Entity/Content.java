@@ -21,7 +21,6 @@ public class Content {
     @Setter
     @Lob
     @Column
-    @Type(type = "org.hibernate.type.TextType")
     private String textUrl;
 
     @Getter
