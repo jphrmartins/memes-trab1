@@ -1,20 +1,12 @@
-Feature: List Categories
+Feature: List Contents
 
-    Scenario: List all
-        Given I have a list of categories
-        When I list the categories
-        Then I should see the following categories:
-            | Type |
-            | gengiva |
-            | labios |
-            | dente |
-            | lingua |
-            | garganta |
-            | todos |
+    Scenario: List all Contents
+        Given: I am at the categories page
+        When: I click on the "todos" button
+        Then: I should see all Contents
 
-    Scenario: List filtered categories
-        Given I have a list of categories
-        When I filter the list by type "genviva"
-        Then I should see the following category:
-            | Type |
-            | genviva |
+    Scenario: List filtered content
+        Given: I am at the categories page
+        When: I click on the "todos" button
+        And: I use the search bar to filter by "gengiva"
+        Then: I should see filtered contents by "gengiva" category
