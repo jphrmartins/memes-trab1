@@ -15,6 +15,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.util.List;
@@ -27,42 +29,37 @@ public class ContentsStep extends CucumberStep {
     private String endpoint;
     private List<Content> response;
 
-    @InjectMocks
-    private ContentController contentController;
-    @InjectMocks
-    private ContentService contentService;
-    @Mock
-    private ContentRepository contentRepository;
-    @Mock
-    private CategoryService categoryService;
-    @Mock
-    private RecommendedSourceService recommendedSourceService;
+    @MockBean
+    private ContentService contentService  = Mockito.mock(ContentService.class);
 
-   @Given("I am at the categories page")
-   public void setCategoryService() {
-       this.endpoint = "api/content";
-   }
 
-   @When("I click on the \"todos\" button")
-   public void clickOnTodosButton() {
+    @Given("I am at the categories page")
+    public void setCategoryService() {
+        this.endpoint = "api/content";
 
-       Category category = new Category();
-       category.setName("gengiva");
-       Content content = new Content();
-       content.setCategories(List.of(category));
+    }
 
-       Mockito.when(this.contentRepository.findAll()).thenReturn(List.of(new Content(), new Content(), content));
-       this.response = (List<Content>) this.client
-           .get()
-           .uri(this.endpoint)
-           .exchange()
-           .expectBody();
-   }
+    @When("I click on the \"todos\" button")
+    public void clickOnTodosButton() {
+        Category category = new Category();
+        category.setName("gengiva");
+        Content content = new Content();
+        content.setCategories(List.of(category));
 
-   @Then("I should see all Contents")
-   public void seeAllContents() {
-       assert this.response.size() > 0;
-   }
+        Mockito.when(this.contentService.getAllContents()).thenReturn(List.of(new Content(), new Content(), content));
+        this.response = this.client
+                .get()
+                .uri(this.endpoint)
+                .exchange()
+                .returnResult(new ParameterizedTypeReference<List<Content>>() {
+                }).getResponseBody().blockFirst();
+
+    }
+
+    @Then("I should see all Contents")
+    public void seeAllContents() {
+        assert !this.response.isEmpty();
+    }
 
     @And("I use the search bar to filter by \"gengiva\"")
     public void filterByGengiva() {

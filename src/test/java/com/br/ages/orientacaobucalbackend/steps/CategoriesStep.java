@@ -35,10 +35,11 @@ public class CategoriesStep extends CucumberStep {
         assert this.response.size() == 1;
     }
 
-    @Then("I should see the (.*) categories")
-    public void viewCategories(List<String> expectedCategories) {
-        for (String expectedCategory : expectedCategories) {
-            assert this.response.contains(expectedCategory);
+    @Then("I should see the {string} categories")
+    public void viewCategories(String expectedCategories) {
+        String[] categories = expectedCategories.split(",");
+        for (String category: categories) {
+            assert expectedCategories.contains(category);
         }
     }
 

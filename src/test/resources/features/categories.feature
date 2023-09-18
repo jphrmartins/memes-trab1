@@ -6,7 +6,7 @@ Feature: List Categories
         Then I should see the <expectedCategories> categories
         Examples:
             | expectedCategories |
-            | "gengiva", "labios", "dente", "lingua", "garganta", "todos" |
+            | "gengiva,labios,dente,lingua,garganta,todos" |
 
     Scenario Outline: List filtered categories
         Given I have a list of categories
