@@ -44,9 +44,9 @@ build:
   only:
     - main
   script:
-    - docker build -t odontogeriatria-backend .
-    - "docker tag odontogeriatria-backend:latest \
-      973629880819.dkr.ecr.us-east-1.amazonaws.com/odontogeriatria-backend:latest"
+    - docker build -t saude-velho-backend .
+    - "docker tag saude-velho-backend:latest \
+      029236691098.dkr.ecr.us-east-2.amazonaws.com/saude-velho-backend:latest"
 
 ########
 # PUSH #
@@ -59,11 +59,11 @@ push:
   before_script:
     - apk add --update --no-cache curl python3 py3-pip build-base openssh-client
     - pip install awscli && apk --purge -v del py-pip
-    - "aws ecr get-login-password --region us-east-1 \
+    - "aws ecr get-login-password --region us-east-2 \
       | docker login --username AWS --password-stdin \
-      973629880819.dkr.ecr.us-east-1.amazonaws.com"
+      029236691098.dkr.ecr.us-east-2.amazonaws.com"
   script:
-    - docker push 973629880819.dkr.ecr.us-east-1.amazonaws.com/odontogeriatria-backend:latest
+    - docker push 029236691098.dkr.ecr.us-east-2.amazonaws.com/saude-velho-backend:latest
 
 ##########
 # DEPLOY #
@@ -80,11 +80,11 @@ deploy:
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
     - docker context create --docker host=ssh://ec2-user@"$SWARM_HOST" swarm
   script:
-    - docker --context swarm service rm odontogeriatria-backend 2>/dev/null || true
+    - docker --context swarm service rm saude-velho-backend 2>/dev/null || true
     - "docker --context swarm service create \
       --with-registry-auth \
       --replicas=1 \
-      --name odontogeriatria-backend \
+      --name saude-velho-backend \
       --network backend \
       -e POSTGRES_DB=orientacao-bucal \
       -e POSTGRES_USER=$POSTGRES_USER \
@@ -93,4 +93,4 @@ deploy:
       -e POSTGRES_PORT=5432 \
       -e SERVER_PORT=3000 \
       --publish published=3000,target=3000 \
-      973629880819.dkr.ecr.us-east-1.amazonaws.com/odontogeriatria-backend:latest"
+      029236691098.dkr.ecr.us-east-2.amazonaws.com/saude-velho-backend:latest"
